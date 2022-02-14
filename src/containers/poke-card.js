@@ -1,7 +1,28 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { colors, mq } from '../styles'
-import { Link } from "@reach/router"
+import { SolidHeartIcon, RegularHeartIcon } from '../components'
+
+const FaveButtonWrapper = styled.button`
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  border: none;
+  padding: 4px;
+  margin: 0;
+  background: none;
+  cursor: pointer;
+`
+
+const FaveButton = ({isFave}) => isFave ? (
+  <FaveButtonWrapper>
+    <SolidHeartIcon />
+  </FaveButtonWrapper>
+) : (
+  <FaveButtonWrapper>
+    <RegularHeartIcon />
+  </FaveButtonWrapper>
+)
 
 const MoveRow = ({ move }) => (
   <StyledMoveRow>
@@ -15,11 +36,12 @@ const MoveRow = ({ move }) => (
 
 const capitalize = (str, alt) => (str && str[0].toUpperCase() + str.slice(1)) || alt || ""
 
-const PokeCard = ({ pokemon }) => {
-  const { id, name, sprites, types, height, weight, moveData } = pokemon.data
+const PokeCard = ({ pokemon, isFavourite = false }) => {
+  const { id, name, sprites, types, height, weight, moveData } = pokemon
   return (
-    <CardContainer to="/">
+    <CardContainer>
       <CardBody>
+        <FaveButton isFave={isFavourite} />
         <CardTitle>{ `# ${id} - ${capitalize(name, "Unknown pokemon")}` }</CardTitle>
         <CardImage src={ sprites?.front_default || "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png" } />
         <PokeType>{ capitalize(types[0]?.type?.name, "Normal") }</PokeType>
@@ -29,7 +51,6 @@ const PokeCard = ({ pokemon }) => {
             move={move}
           />
         )) }
-        
         <PokeInfo>Weight: { weight }, Height: { height }</PokeInfo>
       </CardBody>
     </CardContainer>
@@ -39,7 +60,7 @@ const PokeCard = ({ pokemon }) => {
 export default PokeCard
 
 /** PokeCard styled components */
-const CardContainer = styled(Link)({
+const CardContainer = styled.div({
   borderRadius: 20,
   color: colors.text,
   backgroundSize: 'cover',
@@ -64,12 +85,12 @@ const CardContainer = styled(Link)({
   ':hover': {
     backgroundColor: colors.pokePink,
   },
-  cursor: 'pointer',
   textDecoration: 'none'
 });
 
 const CardTitle = styled.h3({
-  textAlign: 'center',
+  width: '100%',
+  textAlign: 'left',
   fontSize: '1.6em',
   lineHeight: '1em',
   fontWeight: 700,
